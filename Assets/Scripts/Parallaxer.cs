@@ -24,6 +24,11 @@ public class Parallaxer : MonoBehaviour
     public int poolSize;
     public float shiftSpeed;
     public float spawnRate;
+    public float moveSpeed;
+    public int pipePerMove;
+
+    float nextYPos;
+    bool isMove = false;
 
     public YSpawnRange ySpawnRange;
     public Vector3 defaultSpawnPos;
@@ -36,6 +41,7 @@ public class Parallaxer : MonoBehaviour
 
     PoolObject[] poolObjects;
     GameManager game;
+    Transform moveTarget;
 
     void Awake()
     {
@@ -78,11 +84,14 @@ public class Parallaxer : MonoBehaviour
 
         Shift();
         spawnTimer += Time.deltaTime;
-        if(spawnTimer > spawnRate)
+        if(spawnTimer > spawnRate * 1/(game.difficulty * 2))
         {
             Spawn();
             spawnTimer = 0;
         }
+
+        if (isMove == true)
+            Move();
     }
 
     void Configure()
@@ -112,7 +121,23 @@ public class Parallaxer : MonoBehaviour
         Vector3 pos = Vector3.zero;
         pos.x = (defaultSpawnPos.x * Camera.main.aspect) / targetAspect;
         pos.y = Random.Range(ySpawnRange.min, ySpawnRange.max);
+
         t.position = pos;
+
+        if (isMove)
+            return;
+        int randomIndex = Random.Range(0, pipePerMove);
+        if (randomIndex == 0)
+        {
+            moveTarget = t.GetComponent<Transform>();
+            StartCoroutine(Wait());
+            isMove = true;
+        }
+    }
+    IEnumerator Wait()
+    {
+        yield return new WaitForSeconds((1 / game.difficulty) * 4);
+        isMove = false;
     }
 
     void SpawnImmediate()
@@ -127,11 +152,29 @@ public class Parallaxer : MonoBehaviour
         Spawn();
     }
 
+    void Move()
+    {
+        nextYPos += Time.deltaTime * moveSpeed;
+
+        if (nextYPos >= ySpawnRange.max)
+        {
+            moveSpeed *= -1;
+            nextYPos = ySpawnRange.max;
+        }
+        else if (nextYPos <= ySpawnRange.min)
+        {
+            moveSpeed *= -1;
+            nextYPos = ySpawnRange.min;
+        }
+
+        moveTarget.position = new Vector3(moveTarget.position.x, nextYPos, moveTarget.position.z);
+    }
+
     void Shift()
     {
         for(int i = 0; i < poolObjects.Length; i++)
         {
-            poolObjects[i].transform.localPosition += -Vector3.right * shiftSpeed * Time.deltaTime;
+            poolObjects[i].transform.localPosition += -Vector3.right * shiftSpeed * Time.deltaTime * game.difficulty * 2;
             CheckDisposeObject(poolObjects[i]);
         }
     }
@@ -140,7 +183,7 @@ public class Parallaxer : MonoBehaviour
     {
         if(poolObject.transform.position.x < (-defaultSpawnPos.x * Camera.main.aspect) / targetAspect)
         {
-            poolObject.Dispose();
+            poolObject.Dispose();        
             poolObject.transform.position = Vector3.one * 1000;
         }
     }

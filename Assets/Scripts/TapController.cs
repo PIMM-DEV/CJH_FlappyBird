@@ -77,6 +77,10 @@ public class TapController : MonoBehaviour
         {
             OnPlayerScored();
             scoreAudio.Play();
+            if(collision.gameObject.name == "ScoreItem")
+            {
+                collision.gameObject.SetActive(false);
+            }
         }
         if(collision.gameObject.tag == "DeadZone")
         {

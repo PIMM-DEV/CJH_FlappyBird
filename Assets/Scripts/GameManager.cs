@@ -14,14 +14,20 @@ public class GameManager : MonoBehaviour
     public GameObject startPage;
     public GameObject gameOverPage;
     public GameObject countdownPage;
+    public GameObject settingPage;
     public Text scoreText;
+    public Slider slider;
 
+    public float difficulty;
+
+    bool doSetting;
     enum PageState
     {
         None,
         Start,
         GameOver,
-        Countdown
+        Countdown,
+        Setting
     }
 
     int score = 0;
@@ -37,8 +43,11 @@ public class GameManager : MonoBehaviour
     }
     void Awake()
     {
+        Application.targetFrameRate = 60;
         Instance = this;
         SetPageState(PageState.Start);
+        slider.minValue = 0.3f;
+        
     }
 
     void OnEnable()
@@ -47,6 +56,7 @@ public class GameManager : MonoBehaviour
         TapController.OnPlayerDied += OnPlayerDied;
         TapController.OnPlayerScored += OnPlayerScored;
     }
+
 
     void OnDisable()
     {
@@ -90,21 +100,31 @@ public class GameManager : MonoBehaviour
                 startPage.SetActive(false);
                 gameOverPage.SetActive(false);
                 countdownPage.SetActive(false);
+                settingPage.SetActive(false);
                 break;
             case PageState.Start:
                 startPage.SetActive(true);
                 gameOverPage.SetActive(false);
                 countdownPage.SetActive(false);
+                settingPage.SetActive(false);
                 break;
             case PageState.GameOver:
                 startPage.SetActive(false);
                 gameOverPage.SetActive(true);
                 countdownPage.SetActive(false);
+                settingPage.SetActive(false);
                 break;
             case PageState.Countdown:
                 startPage.SetActive(false);
                 gameOverPage.SetActive(false);
                 countdownPage.SetActive(true);
+                settingPage.SetActive(false);
+                break;
+            case PageState.Setting:
+                startPage.SetActive(false);
+                gameOverPage.SetActive(false);
+                countdownPage.SetActive(false);
+                settingPage.SetActive(true);
                 break;
         }
     }
@@ -118,6 +138,18 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        SetPageState(PageState.Countdown);
+    }
+
+    public void Setting()
+    {
+        slider.value = difficulty;
+        SetPageState(PageState.Setting);
+    }
+
+    public void SettingStart()
+    {
+        difficulty = slider.value;
         SetPageState(PageState.Countdown);
     }
 }
