@@ -1,8 +1,5 @@
-/.vs
-/Logs
-/Library
-/obj
 /.vsconfig
+
 /CrazyBird.sin
+
 /Assembly-CSharp.csproj
-/UserSettings
