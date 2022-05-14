@@ -121,7 +121,6 @@ public class Parallaxer : MonoBehaviour
         Vector3 pos = Vector3.zero;
         pos.x = (defaultSpawnPos.x * Camera.main.aspect) / targetAspect;
         pos.y = Random.Range(ySpawnRange.min, ySpawnRange.max);
-
         t.position = pos;
 
         if (isMove)

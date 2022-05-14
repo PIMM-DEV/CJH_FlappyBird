@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverPage;
     public GameObject countdownPage;
     public GameObject settingPage;
+    public GameObject boomButton;
     public Text scoreText;
     public Slider slider;
 
@@ -97,6 +98,7 @@ public class GameManager : MonoBehaviour
         switch (state)
         {
             case PageState.None:
+                boomButton.SetActive(true);
                 startPage.SetActive(false);
                 gameOverPage.SetActive(false);
                 countdownPage.SetActive(false);
@@ -107,24 +109,28 @@ public class GameManager : MonoBehaviour
                 gameOverPage.SetActive(false);
                 countdownPage.SetActive(false);
                 settingPage.SetActive(false);
+                boomButton.SetActive(false);
                 break;
             case PageState.GameOver:
                 startPage.SetActive(false);
                 gameOverPage.SetActive(true);
                 countdownPage.SetActive(false);
                 settingPage.SetActive(false);
+                boomButton.SetActive(false);
                 break;
             case PageState.Countdown:
                 startPage.SetActive(false);
                 gameOverPage.SetActive(false);
                 countdownPage.SetActive(true);
                 settingPage.SetActive(false);
+                boomButton.SetActive(false);
                 break;
             case PageState.Setting:
                 startPage.SetActive(false);
                 gameOverPage.SetActive(false);
                 countdownPage.SetActive(false);
                 settingPage.SetActive(true);
+                boomButton.SetActive(false);
                 break;
         }
     }
